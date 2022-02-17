@@ -8,9 +8,9 @@ services:
     image: postgres:14
     restart: always
     environment:
-      - POSTGRES_USER=hydra
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=hydra
+      POSTGRES_USER: hydra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: hydra
 
   init-db:
     build: .
