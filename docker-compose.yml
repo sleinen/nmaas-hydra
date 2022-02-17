@@ -1,0 +1,16 @@
+---
+services:
+  hydra:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - HYDRA_DBI=dbi:Pg:host=db;dbname=hydra;user=hydra;password=${POSTGRES_PASSWORD}
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=hydra
+      - POSTGRES_HOST_AUTH_METHOD=trust
