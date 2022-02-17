@@ -13,4 +13,3 @@ services:
       - POSTGRES_USER=hydra
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=hydra
-      - POSTGRES_HOST_AUTH_METHOD=trust
