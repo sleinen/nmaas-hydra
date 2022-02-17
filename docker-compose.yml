@@ -14,22 +14,20 @@ services:
 
   init-db:
     build: .
-    #
-    # Ugly hack:
-    #
-    # Without the sleep, hydra-init may fail because the PostgreSQL
-    # TCP service may not yet be accepting connections when the
-    # init-db container is started.
-    #
-    # Hopefully Kubernetes has a mechanism to wait for the service to
-    # become "live" before starting an init container...
-    #
-    entrypoint: ["sh", "-c", "sleep 5 && hydra-init"]
+    entrypoint: ["hydra-init"]
     environment:
       <<: *cenv
     depends_on:
       db:
         condition: service_started
+    deploy:
+      restart_policy:
+        # We may have to retry the hydra-init container.
+        # The first time it is started, it's quite possible that the
+        # PostgreSQL TCP service from the db container isn't available
+        # yet.  The hydra-init command doesn't like this and
+        # terminates with an error.
+        condition: on-failure
 
   hydra:
     build: .
