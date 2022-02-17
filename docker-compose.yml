@@ -1,0 +1,40 @@
+---
+x-common-env: &cenv
+    HYDRA_DBI: dbi:Pg:host=db;dbname=hydra;user=hydra;password=${POSTGRES_PASSWORD}
+
+services:
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=hydra
+
+  init-db:
+    build: .
+    entrypoint: ["hydra-init"]
+    environment:
+      <<: *cenv
+    depends_on:
+      db:
+        condition: service_started
+    deploy:
+      restart_policy:
+        # We may have to retry the hydra-init container.
+        # The first time it is started, it's quite possible that the
+        # PostgreSQL TCP service from the db container isn't available
+        # yet.  The hydra-init command doesn't like this and
+        # terminates with an error.
+        condition: on-failure
+
+  hydra:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      <<: *cenv
+    depends_on:
+      init-db:
+        condition: service_completed_successfully

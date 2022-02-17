@@ -2,26 +2,22 @@
 
 Hydra as an NMaaS service/application
 
-## Hydra Docker image
+## Test Using docker-compose
 
-### Building
-
-To build a Docker image including a Hydra server, run
-
-```
-docker build -t hydra .
-```
-
-### Running
-
-This image can then be run using
+You can start the Hydra and PostgreSQL containers using
+docker-compose:
 
 ```
-docker run --rm -d -p 3000:3000 --name hydra hydra
+export POSTGRES_PASSWORD
+POSTGRES_PASSWORD=$(pwgen -s 20 1)
+docker-compose up
 ```
 
-This will start the container from the `hydra` image, use `hydra` for
-the name of the running container, detach (background) the process
-(`-d`), expose the Hydra server port under port `3000`, and remove the
-container once it has terminated.
+This will build the `hydra` container image if necessary, then start a
+Hydra container along with another container to provide the required
+PostgreSQL database.  The Hydra HTTP server port will be exposed under
+port `3000`.
 
+Before the Hydra service container is started, an init container
+(`init-db`) will be run to set up the required databases in
+PostgreSQL.
