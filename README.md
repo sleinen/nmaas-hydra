@@ -17,3 +17,7 @@ This will build the `hydra` container image if necessary, then start a
 Hydra container along with another container to provide the required
 PostgreSQL database.  The Hydra HTTP server port will be exposed under
 port `3000`.
+
+Before the Hydra service container is started, an init container
+(`init-db`) will be run to set up the required databases in
+PostgreSQL.
