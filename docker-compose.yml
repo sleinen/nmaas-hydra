@@ -1,11 +1,9 @@
 ---
+x-common-env: &cenv
+    HYDRA_DBI: dbi:Pg:host=db;dbname=hydra;user=hydra;password=${POSTGRES_PASSWORD}
+
 services:
-  hydra:
-    build: .
-    ports:
-      - 3000:3000
-    environment:
-      - HYDRA_DBI=dbi:Pg:host=db;dbname=hydra;user=hydra;password=${POSTGRES_PASSWORD}
+
   db:
     image: postgres:14
     restart: always
@@ -13,3 +11,32 @@ services:
       - POSTGRES_USER=hydra
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=hydra
+
+  init-db:
+    build: .
+    #
+    # Ugly hack:
+    #
+    # Without the sleep, hydra-init may fail because the PostgreSQL
+    # TCP service may not yet be accepting connections when the
+    # init-db container is started.
+    #
+    # Hopefully Kubernetes has a mechanism to wait for the service to
+    # become "live" before starting an init container...
+    #
+    entrypoint: ["sh", "-c", "sleep 5 && hydra-init"]
+    environment:
+      <<: *cenv
+    depends_on:
+      db:
+        condition: service_started
+
+  hydra:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      <<: *cenv
+    depends_on:
+      init-db:
+        condition: service_completed_successfully
