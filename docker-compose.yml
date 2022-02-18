@@ -1,6 +1,7 @@
 ---
 x-common-env: &cenv
     HYDRA_DBI: dbi:Pg:host=db;dbname=hydra;user=hydra;password=${POSTGRES_PASSWORD}
+    HYDRA_DATA: /var/lib/hydra
 
 services:
 
@@ -48,12 +49,40 @@ services:
       init-db:
         condition: service_completed_successfully
 
-  hydra:
+  hydra-server:
     build: .
     ports:
       - 3000:3000
     environment:
       <<: *cenv
+    volumes:
+      - hydra-data:/var/lib/hydra
     depends_on:
       init-user:
         condition: service_completed_successfully
+
+  hydra-queue-runner:
+    build: .
+    entrypoint: ["hydra-queue-runner"]
+    environment:
+      <<: *cenv
+      LOGNAME: hydra
+    volumes:
+      - hydra-data:/var/lib/hydra
+    depends_on:
+      init-user:
+        condition: service_completed_successfully
+
+  hydra-evaluator:
+    build: .
+    entrypoint: ["hydra-evaluator"]
+    environment:
+      <<: *cenv
+    volumes:
+      - hydra-data:/var/lib/hydra
+    depends_on:
+      init-user:
+        condition: service_completed_successfully
+
+volumes:
+  hydra-data:

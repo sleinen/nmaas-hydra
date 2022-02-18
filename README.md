@@ -13,11 +13,17 @@ POSTGRES_PASSWORD=$(pwgen -s 20 1)
 docker-compose up
 ```
 
-This will build the `hydra` container image if necessary, then start a
-Hydra container along with another container to provide the required
-PostgreSQL database.  The Hydra HTTP server port will be exposed under
-port `3000`.
+This will build the `hydra` container image if necessary, then start
+several containers running various services:
 
-Before the Hydra service container is started, initialisation
-containers will be run to set up the required databases in PostgreSQL
-and create an admin user `alice` with password `foobar`.
+* `hydra-server` running the HTTP interface, exposed on TCP port 3000
+* `hydra-evaluator`
+* `hydra-queue-runner`
+* `db` running a PostgreSQL server
+
+The `hydra-` containers share a common volume for their `HYDRA_DATA`
+directory (`/var/lib/hydra`).
+
+Before the Hydra containers are started, one or more initialization
+containers will set up the required databases in PostgreSQL and create
+an admin user `alice` with password `foobar`.
