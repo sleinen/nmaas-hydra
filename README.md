@@ -18,6 +18,6 @@ Hydra container along with another container to provide the required
 PostgreSQL database.  The Hydra HTTP server port will be exposed under
 port `3000`.
 
-Before the Hydra service container is started, an init container
-(`init-db`) will be run to set up the required databases in
-PostgreSQL.
+Before the Hydra service container is started, initialisation
+containers will be run to set up the required databases in PostgreSQL
+and create an admin user `alice` with password `foobar`.

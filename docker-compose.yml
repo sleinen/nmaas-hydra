@@ -29,6 +29,25 @@ services:
         # terminates with an error.
         condition: on-failure
 
+  init-user:
+    build: .
+    entrypoint:
+      - hydra-create-user
+      - alice
+      - --full-name
+      - "Alice Q. User"
+      - --email-address
+      - 'alice@example.org'
+      - --password
+      - foobar
+      - --role
+      - admin
+    environment:
+      <<: *cenv
+    depends_on:
+      init-db:
+        condition: service_completed_successfully
+
   hydra:
     build: .
     ports:
@@ -36,5 +55,5 @@ services:
     environment:
       <<: *cenv
     depends_on:
-      init-db:
+      init-user:
         condition: service_completed_successfully
