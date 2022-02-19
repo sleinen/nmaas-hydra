@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  nmaas-hydra:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-02-19T21:42:08.648036311Z"
+    description: A Helm chart for Kubernetes
+    digest: e615b40d1e0e0ed09aafc97fa0301af668f2563f38e1d3bc7139832b54a1a925
+    maintainers:
+    - email: simon.leinen@switch.ch
+      name: sleinen
+    name: nmaas-hydra
+    type: application
+    urls:
+    - https://github.com/sleinen/nmaas-hydra/releases/download/nmaas-hydra-0.1.0/nmaas-hydra-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-02-19T21:42:08.648044911Z"
